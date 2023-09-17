@@ -20,8 +20,8 @@ class CustomUserSerializer(UserSerializer):
         return Subscription.objects.filter(user=user, author=obj).exists()
 
     def validate(self, attrs):
-        if ('me' in self.context['request'].path and
-                self.context['request'].user.is_anonymous):
+        if ('me' in self.context['request'].path
+                and self.context['request'].user.is_anonymous):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         return super().validate(attrs)
