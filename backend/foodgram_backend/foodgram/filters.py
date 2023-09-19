@@ -25,7 +25,10 @@ class RecipeFilter(filters.FilterSet):
         user = self.request.user
 
         if value and user.is_authenticated:
-            return queryset.filter(favorited__user=user)
+            queryset = queryset.filter(favorited__user=user)
+
+        if value is False and user.is_authenticated:
+            queryset = queryset.exclude(favorited__user=user)
 
         return queryset
 
@@ -33,6 +36,9 @@ class RecipeFilter(filters.FilterSet):
         user = self.request.user
 
         if value and user.is_authenticated:
-            return queryset.filter(shopping_carts__user=user)
+            queryset = queryset.filter(shopping_carts__user=user)
+
+        if value is False and user.is_authenticated:
+            queryset = queryset.exclude(shopping_carts__user=user)
 
         return queryset

@@ -19,7 +19,6 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
 class SubscriptionSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
-    """recipes = ShortRecipeSerializer(many=True)"""
     recipes = serializers.SerializerMethodField()
 
     class Meta:
@@ -41,12 +40,10 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         return Subscription.objects.filter(user=user, author=obj).exists()
 
     def get_recipes_count(self, obj):
-        return Recipe.objects.filter(author=obj).count()
+        return obj.recipes.count()
 
     def get_recipes(self, obj):
         queryset = Recipe.objects.filter(author=obj).all()
-
-        print(self.context['request'].user)
 
         if self.context['request'].query_params:
             recipes_limit = int(
@@ -61,7 +58,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ('id', 'name', 'color', 'slug')
+        fields = '__all__'
         model = Tag
         read_only_fields = ('id', 'name', 'color', 'slug')
 
@@ -69,7 +66,7 @@ class TagSerializer(serializers.ModelSerializer):
 class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = ('id', 'name', 'measurement_unit')
+        fields = '__all__'
         model = Ingredient
         read_only_fields = ('id', 'name', 'measurement_unit')
 
@@ -96,10 +93,8 @@ class RecipeSerializer(serializers.ModelSerializer):
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-        fields = ('id', 'tags', 'author', 'ingredients',
-                  'name', 'image', 'text', 'cooking_time',
-                  'is_favorited', 'is_in_shopping_cart')
         model = Recipe
+        exclude = ('pub_date',)
 
     def get_is_favorited(self, obj):
         if not self.context['request'].user.is_anonymous:
@@ -162,13 +157,10 @@ class AddRecipeSerializer(serializers.ModelSerializer):
             **validated_data, author=self.context['request'].user)
         recipe.tags.set(tags)
 
-        to_save = []
-        for item in ingredients:
-            to_save.append(
-                IngredientToRecipe(
-                    ingredient=item['id'],
-                    amount=item['amount'], recipe=recipe)
-            )
+        to_save = [
+            IngredientToRecipe(ingredient=item['id'],
+                               amount=item['amount'],
+                               recipe=recipe) for item in ingredients]
         IngredientToRecipe.objects.bulk_create(to_save)
 
         return recipe
@@ -193,13 +185,10 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                 recipe=instance,
                 ingredient__in=instance.ingredients.all()).delete()
 
-            to_save = []
-            for item in ingredients:
-                to_save.append(
-                    IngredientToRecipe(
-                        ingredient=item['id'],
-                        amount=item['amount'], recipe=instance)
-                )
+            to_save = [
+                IngredientToRecipe(ingredient=item['id'],
+                                   amount=item['amount'],
+                                   recipe=instance) for item in ingredients]
             IngredientToRecipe.objects.bulk_create(to_save)
         instance.save()
         return instance

@@ -110,11 +110,8 @@ class RecipeViewSet(viewsets.GenericViewSet,
                 status=status.HTTP_400_BAD_REQUEST)
         recipe = Recipe.objects.get(id=pk)
 
-        if ShoppingCart.objects.filter(user=request.user).exists():
-            shopping_cart = ShoppingCart.objects.get(user=request.user)
-        else:
-            ShoppingCart.objects.create(user=request.user)
-            shopping_cart = ShoppingCart.objects.get(user=request.user)
+        shopping_cart, _ = ShoppingCart.objects.get_or_create(
+            user=request.user)
 
         if request.method == 'POST':
 
@@ -145,7 +142,7 @@ class RecipeViewSet(viewsets.GenericViewSet,
 
     @action(detail=False, methods=['get'],
             permission_classes=(permissions.IsAuthenticated,))
-    def download_shopping_cart(self, request, **kwargs):
+    def download_shopping_cart(self, request):
         ingredients = (
             IngredientToRecipe.objects
             .filter(recipe__shopping_carts__user=request.user)

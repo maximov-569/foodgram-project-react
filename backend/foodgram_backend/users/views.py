@@ -14,8 +14,8 @@ class SubscriptionsViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         return (User.objects.filter(
-            id__in=[sub.author.id for sub in Subscription.objects.filter(
-                user=self.request.user).all()]
+            id__in=Subscription.objects.filter(
+                user=self.request.user).values_list('author__id', flat=True)
         ).all())
 
 
