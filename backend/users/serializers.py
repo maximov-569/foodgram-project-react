@@ -1,7 +1,6 @@
 from djoser.serializers import UserSerializer
 from rest_framework import serializers, status
 from rest_framework.response import Response
-
 from users.models import User, Subscription
 
 

@@ -1,7 +1,6 @@
 from django.contrib import admin
-
-from foodgram.models import (Tag, Recipe, Ingredient, IngredientToRecipe,
-                             Favorite, ShoppingCart)
+from foodgram.models import (Recipe, Ingredient, Tag,
+                             IngredientToRecipe, Favorite, ShoppingCart)
 
 
 class RecipeAdmin(admin.ModelAdmin):

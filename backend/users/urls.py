@@ -1,6 +1,5 @@
 from django.urls import path, include
 from rest_framework import routers
-
 from users.views import subscribe, SubscriptionsViewSet
 
 router_v1 = routers.DefaultRouter()

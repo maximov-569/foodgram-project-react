@@ -5,7 +5,6 @@ from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-
 from foodgram.models import (Tag, Ingredient, Recipe, Favorite, ShoppingCart,
                              IngredientToRecipe)
 from foodgram.serializers import (TagSerializer, IngredientSerializer,

@@ -1,11 +1,8 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-
 from drf_base64.fields import Base64ImageField
 from users.serializers import CustomUserSerializer
-
 from users.models import User, Subscription
-
 from foodgram.models import (Tag, Ingredient, Recipe, IngredientToRecipe,
                              Favorite, ShoppingCart)
 

@@ -2,7 +2,6 @@ from rest_framework import permissions, status, viewsets, mixins
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-
 from users.models import Subscription, User
 from foodgram.serializers import SubscriptionSerializer
 
