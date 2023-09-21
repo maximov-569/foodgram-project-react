@@ -20,7 +20,7 @@ services:
       - foodgram_db
   frontend:
     env_file: .env
-    image: sergeymaximov/foodgram_backend
+    image: sergeymaximov/foodgram_frontend
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - foodgram_static:/frontend_static
