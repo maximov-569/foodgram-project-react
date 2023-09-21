@@ -19,11 +19,10 @@ from foodgram.filters import RecipeFilter
 class TagViewSet(viewsets.GenericViewSet,
                  mixins.ListModelMixin,
                  mixins.RetrieveModelMixin):
-    lookup_field = 'id'
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
 
 
 class IngredientViewSet(viewsets.GenericViewSet,
@@ -32,7 +31,7 @@ class IngredientViewSet(viewsets.GenericViewSet,
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
 
@@ -56,6 +55,7 @@ class RecipeViewSet(viewsets.GenericViewSet,
         if request.user != instance.author:
             return Response({'detail': 'Only author can update recipe.'},
                             status=status.HTTP_403_FORBIDDEN)
+
         return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
@@ -68,9 +68,8 @@ class RecipeViewSet(viewsets.GenericViewSet,
         return super().destroy(request, *args, **kwargs)
 
     def get_serializer_class(self):
-        if self.request.method == "GET":
-            return RecipeSerializer
-        return AddRecipeSerializer
+        return (RecipeSerializer if self.request.method == "GET"
+                else AddRecipeSerializer)
 
     @action(methods=['POST', 'DELETE'],
             detail=True,
