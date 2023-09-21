@@ -6,12 +6,12 @@ volumes:
 
 services:
   foodgram_db:
-    build: ./data/
+    image: postgres:13.10
     env_file: .env
     volumes:
       - foodgram_pg_data:/var/lib/postgresql/data
   backend:
-    build: ./backend/
+    image: sergeymaximov/foodgram_backend
     env_file: .env
     volumes:
       - foodgram_static:/backend_static
@@ -20,12 +20,12 @@ services:
       - foodgram_db
   frontend:
     env_file: .env
-    build: ./frontend/
+    image: sergeymaximov/foodgram_backend
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - foodgram_static:/frontend_static
   gateway:
-    build: ./gateway/
+    build: sergeymaximov/
     volumes:
       - foodgram_static:/staticfiles/
       - foodgram_media:/media_files_foodgram
