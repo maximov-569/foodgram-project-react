@@ -10,6 +10,9 @@ class SubscriptionsViewSet(viewsets.GenericViewSet,
                            mixins.ListModelMixin):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = SubscriptionSerializer
+    """ViewSet for Subscription model.
+    
+    get_queryset() - returns users that request user subscribed on."""
 
     def get_queryset(self):
         return (User.objects.filter(
@@ -21,6 +24,7 @@ class SubscriptionsViewSet(viewsets.GenericViewSet,
 @api_view(['POST', 'DELETE'])
 @permission_classes([permissions.IsAuthenticated])
 def subscribe(request, pk):
+    """Implement subscribe functionality."""
     author = get_object_or_404(User, id=pk)
 
     if request.method == 'POST':

@@ -18,6 +18,9 @@ from foodgram.filters import RecipeFilter
 class TagViewSet(viewsets.GenericViewSet,
                  mixins.ListModelMixin,
                  mixins.RetrieveModelMixin):
+    """ViewSet for Tag model.
+
+    Only get method allowed."""
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
@@ -27,6 +30,9 @@ class TagViewSet(viewsets.GenericViewSet,
 class IngredientViewSet(viewsets.GenericViewSet,
                         mixins.RetrieveModelMixin,
                         mixins.ListModelMixin):
+    """ViewSet for Ingredient model.
+
+    Only get method allowed."""
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class = None
@@ -41,6 +47,16 @@ class RecipeViewSet(viewsets.GenericViewSet,
                     mixins.CreateModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.DestroyModelMixin):
+    """ViewSet for Recipe model.
+
+    update and destroy - reassembled to protect Recipes from
+        changes that can make other users.
+    get_serializer_class - provide different serializer depending on method.
+    favorite() and shopping_cart() -
+        implements Favorite and ShoppingCart models.
+    download_shopping_cart() - download 'to buy list' depending on recipes
+        that user added to shopping_cart.
+    """
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = CustomWithLimitPagination

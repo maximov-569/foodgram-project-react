@@ -4,6 +4,10 @@ from foodgram.models import (Recipe, Ingredient, Tag,
 
 
 class RecipeAdmin(admin.ModelAdmin):
+    """Admin model for Recipe.
+
+    favorited - how many times recipe was added to favorite.
+    """
     search_fields = ('name', 'author__email', 'tags__slug')
     readonly_fields = ('favorited',)
 
@@ -13,6 +17,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 class IngredientAdmin(admin.ModelAdmin):
+    """Admin model for Ingredients."""
     search_fields = ('name',)
 
 

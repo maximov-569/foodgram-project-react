@@ -10,6 +10,6 @@ RUN pip install -r requirements.txt --no-cache-dir
 
 COPY . .
 
-COPY templates/404.html ../backend_static/404.html
+COPY templates/. ../backend_static/
 
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "foodgram_backend.wsgi"]

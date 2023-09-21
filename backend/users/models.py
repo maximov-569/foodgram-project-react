@@ -19,6 +19,9 @@ class User(AbstractUser):
 
 
 class Subscription(models.Model):
+    """Implement 'following' possibility.
+
+    Any user can follow any user get easy navigated to its recipes."""
     user = models.ForeignKey(
         User, related_name='subscriptions',
         null=False,

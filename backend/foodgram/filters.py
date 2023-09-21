@@ -3,6 +3,7 @@ from foodgram.models import Recipe
 
 
 class RecipeFilter(filters.FilterSet):
+    """Filter for recipe model."""
     author = filters.CharFilter(
         field_name='author',
     )

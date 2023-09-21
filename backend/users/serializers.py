@@ -5,6 +5,10 @@ from users.models import User, Subscription
 
 
 class CustomUserSerializer(UserSerializer):
+    """Serialize user model adding additional field 'is_subscribed'
+    that true if user subscribed on serialized user.
+    Also, added extra validation for 'users/me/' endpoint.
+    """
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:

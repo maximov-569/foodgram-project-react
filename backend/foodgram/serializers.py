@@ -8,12 +8,15 @@ from foodgram.models import (Tag, Ingredient, Recipe, IngredientToRecipe,
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
+    """Represents short list of fields for Recipe model for some
+    specific endpoints."""
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
+    """Serializer for SubscriptionViewSet."""
     is_subscribed = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
@@ -40,6 +43,8 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         return obj.recipes.count()
 
     def get_recipes(self, obj):
+        """Through this method we can limit recipe count for
+        each user in sent data."""
         queryset = Recipe.objects.filter(author=obj).all()
 
         if self.context['request'].query_params:
@@ -54,6 +59,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
+    """Serializer for Tag model."""
     class Meta:
         fields = '__all__'
         model = Tag
@@ -61,6 +67,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
+    """Serializer for Ingredient model."""
 
     class Meta:
         fields = '__all__'
@@ -69,6 +76,8 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientToRecipeSerializer(serializers.ModelSerializer):
+    """Through this serializer implemented
+    'Ingredient' + 'amount' representation."""
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -81,6 +90,7 @@ class IngredientToRecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeSerializer(serializers.ModelSerializer):
+    """Read recipe serializer."""
     tags = TagSerializer(many=True, read_only=True)
     ingredients = IngredientToRecipeSerializer(
         many=True, read_only=True, source='ingredient')
@@ -107,6 +117,13 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
+    """Write recipe serializer.
+
+    Reassembled update and create methods because recipe model have many nested
+    fields.
+
+    to_representation - uses RecipeSerializer because here some difference in
+    serializing ingredients field."""
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
 
     class Meta:

@@ -4,6 +4,7 @@ from users.models import User
 
 
 class Tag(models.Model):
+    """Short tag allow to specify recipe and make site explore easier."""
     name = models.CharField(
         max_length=15,
         unique=True,
@@ -33,6 +34,9 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
+    """Ingredient model.
+
+    Contents info about ingredient."""
     name = models.CharField(
         max_length=100,
         blank=False,
@@ -46,6 +50,10 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
+    """Recipe model.
+
+    tag and ingredients - m2m fields.
+    ingredients - make relations through IngredientToRecipe model."""
     author = models.ForeignKey(
         User, related_name='recipes',
         on_delete=models.CASCADE,
@@ -92,6 +100,11 @@ class Recipe(models.Model):
 
 
 class IngredientToRecipe(models.Model):
+    """Connect ingredient and recipe.
+
+    amount - additional field, allows to provide amount of ingredient
+    in related recipe.
+    """
     ingredient = models.ForeignKey(
         Ingredient, related_name='recipe',
         null=False,
@@ -120,6 +133,8 @@ class IngredientToRecipe(models.Model):
 
 
 class Favorite(models.Model):
+    """Provide connection between user and recipe models. ALlow user to
+    'keep in mind' recipes."""
     user = models.ForeignKey(
         User, related_name='favorite',
         null=False,
@@ -135,6 +150,9 @@ class Favorite(models.Model):
 
 
 class ShoppingCart(models.Model):
+    """Additional model for recipe 'following'.
+    Difference is that objects in shopping cart can be presented like
+    'amount of ingredients to buy' through 'download_shopping_cart' func."""
     user = models.OneToOneField(
         User, related_name='shopping_cart',
         blank=False,
