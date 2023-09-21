@@ -57,7 +57,7 @@ class RecipeViewSet(viewsets.GenericViewSet,
     download_shopping_cart() - download 'to buy list' depending on recipes
         that user added to shopping_cart.
     """
-    queryset = Recipe.objects.all()
+    queryset = Recipe.objects.all().order_by('-pub_date')
     serializer_class = RecipeSerializer
     pagination_class = CustomWithLimitPagination
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
