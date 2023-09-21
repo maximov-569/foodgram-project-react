@@ -105,7 +105,5 @@ jobs:
             sudo docker compose -f docker-compose.yml exec backend python manage.py migrate
             sudo docker compose -f docker-compose.yml exec backend python manage.py collectstatic
             sudo docker compose -f docker-compose.yml exec backend cp -r /app/collected_static/. /backend_static/static/
-            # Import csv data to database.
             sudo docker compose cp data/ingredients.csv foodgram_db:/ingredients.csv
             sudo docker compose exec foodgram_db psql -d foodgram -U ${{ secrets.DATABASE_USERNAME }} -c "COPY foodgram_ingredient(name, measurement_unit) FROM '/ingredients.csv' WITH DELIMITER ',' CSV;"
-            
