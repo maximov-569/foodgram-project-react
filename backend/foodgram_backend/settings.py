@@ -31,6 +31,8 @@ ALLOWED_HOSTS = ['localhost',
                  '127.0.0.1',
                  'foodenjoyers.mooo.com',]
 
+CSRF_TRUSTED_ORIGINS = ['https://foodenjoyers.mooo.com']
+
 
 # Application definition
 
