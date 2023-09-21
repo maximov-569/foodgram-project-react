@@ -22,12 +22,14 @@ PATH_TO_MEDIA_ROOT = '/media_files/'
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-#4vn4d=zc7@3s66$_y$9jmtd7rdaili*63ol=7fado!z(!yws$'
+SECRET_KEY = os.getenv('SECRET_KEY', 'test')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'local_host']
+ALLOWED_HOSTS = ['localhost',
+                 '127.0.0.1',
+                 'foodenjoyers.mooo.com',]
 
 
 # Application definition
