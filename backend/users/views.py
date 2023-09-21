@@ -11,9 +11,7 @@ class SubscriptionsViewSet(viewsets.GenericViewSet,
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = SubscriptionSerializer
     """ViewSet for Subscription model.
-    
     get_queryset() - returns users that request user subscribed on."""
-
     def get_queryset(self):
         return (User.objects.filter(
             id__in=Subscription.objects.filter(
