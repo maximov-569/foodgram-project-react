@@ -25,12 +25,9 @@ services:
     volumes:
       - foodgram_static:/frontend_static
   gateway:
-    build: sergeymaximov/foodgram_gateway
+    image: sergeymaximov/foodgram_gateway
     volumes:
       - foodgram_static:/staticfiles/
       - foodgram_media:/media_files_foodgram
     ports:
       - 10000:80
-    depends_on:
-      - frontend
-      - backend
