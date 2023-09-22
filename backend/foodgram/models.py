@@ -16,12 +16,6 @@ class Tag(models.Model):
         default='#ffffff',
     )
 
-    def colored_name(self):
-        return format_html(
-            '<span style="color: #{};">{}</span>',
-            self.color,
-        )
-
     slug = models.SlugField(
         max_length=15,
         unique=True,
@@ -47,6 +41,14 @@ class Ingredient(models.Model):
         blank=False,
         null=False,
     )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'measurement_unit'],
+                name='Unique pair constraint.'
+            )
+        ]
 
 
 class Recipe(models.Model):
