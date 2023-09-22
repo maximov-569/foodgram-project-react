@@ -29,14 +29,12 @@ def subscribe(request, pk):
         if (Subscription.objects.filter(user=request.user,
                                         author=author).exists()
                 or request.user == author):
-            error = {
+            return Response({
                 'detail': 'Already subscribed or trying to subscribe yourself.'
-            }
-            return Response(error, status=status.HTTP_400_BAD_REQUEST)
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         Subscription.objects.create(user=request.user, author=author)
-        context = dict()
-        context['request'] = request
+        context = dict(request=request)
         serializer = SubscriptionSerializer(author, context=context)
         return Response(
             serializer.data,

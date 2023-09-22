@@ -45,12 +45,12 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     def get_recipes(self, obj):
         """Through this method we can limit recipe count for
         each user in sent data."""
-        queryset = Recipe.objects.filter(author=obj).all()
+        queryset = Recipe.objects.filter(author=obj)
 
         if self.context['request'].query_params:
             recipes_limit = int(
                 self.context['request'].query_params['recipes_limit'])
-            queryset = queryset[:recipes_limit:]
+            queryset = queryset[:recipes_limit]
 
         serializer = ShortRecipeSerializer(
             queryset, many=True, context=self.context)
@@ -104,16 +104,14 @@ class RecipeSerializer(serializers.ModelSerializer):
         exclude = ('pub_date',)
 
     def get_is_favorited(self, obj):
-        if not self.context['request'].user.is_anonymous:
-            return Favorite.objects.filter(
-                recipe=obj, user=self.context['request'].user).exists()
-        return False
+        user = self.context['request'].user
+        return (False if user.is_anonymous else
+                Favorite.objects.filter(recipe=obj, user=user).exists())
 
     def get_is_in_shopping_cart(self, obj):
-        if not self.context['request'].user.is_anonymous:
-            return ShoppingCart.objects.filter(
-                recipes=obj, user=self.context['request'].user).exists()
-        return False
+        user = self.context['request'].user
+        return (False if user.is_anonymous else
+                ShoppingCart.objects.filter(recipes=obj, user=user).exists())
 
 
 class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
@@ -157,10 +155,9 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                         detail='Amount should be greater than 0.')
 
         cooking_time = attrs.get('cooking_time')
-        if cooking_time:
-            if cooking_time <= 0:
-                raise ValidationError(
-                    detail='Cooking time should be greater than 0.')
+        if cooking_time and cooking_time <= 0:
+            raise ValidationError(
+                detail='Cooking time should be greater than 0.')
 
         return attrs
 
@@ -193,7 +190,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
             tags = validated_data.pop('tags')
             instance.tags.set(tags)
 
-        if "ingredients" in validated_data:
+        if 'ingredients' in validated_data:
             ingredients = validated_data.pop('ingredients')
             IngredientToRecipe.objects.filter(
                 recipe=instance,
