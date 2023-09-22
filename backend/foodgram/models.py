@@ -45,7 +45,7 @@ class Ingredient(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['name', 'measurement_unit'],
-                name='Unique pair constraint.'
+                name='Unique name/measurement_unit constraint.'
             )
         ]
 
@@ -128,7 +128,7 @@ class IngredientToRecipe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],
-                name='Unique pair constraint.'
+                name='Unique recipe/ingredient constraint.'
             )
         ]
 
