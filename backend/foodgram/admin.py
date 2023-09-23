@@ -17,10 +17,6 @@ class RecipeAdmin(admin.ModelAdmin):
     def favorited(self, obj):
         return obj.favorited.count()
 
-    @admin.display()
-    def author(self, obj):
-        return obj.author.username
-
 
 class IngredientAdmin(admin.ModelAdmin):
     """Admin model for Ingredients."""
