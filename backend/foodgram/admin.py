@@ -11,11 +11,15 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'author__email', 'tags__slug')
     readonly_fields = ('favorited',)
     list_filter = ('name', 'author', 'tags')
-    list_display = ('name', 'author__username')
+    list_display = ('name', 'author')
 
     @admin.display()
     def favorited(self, obj):
         return obj.favorited.count()
+
+    @admin.display()
+    def author(self, obj):
+        return obj.author.username
 
 
 class IngredientAdmin(admin.ModelAdmin):
