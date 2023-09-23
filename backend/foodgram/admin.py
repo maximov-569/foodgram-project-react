@@ -10,6 +10,8 @@ class RecipeAdmin(admin.ModelAdmin):
     """
     search_fields = ('name', 'author__email', 'tags__slug')
     readonly_fields = ('favorited',)
+    list_filter = ('name', 'author', 'tags')
+    list_display = ('name', 'author__username')
 
     @admin.display()
     def favorited(self, obj):
@@ -19,6 +21,8 @@ class RecipeAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     """Admin model for Ingredients."""
     search_fields = ('name',)
+    list_filter = ('name',)
+    list_display = ('name', 'measurement_unit')
 
 
 admin.site.register(Recipe, RecipeAdmin)

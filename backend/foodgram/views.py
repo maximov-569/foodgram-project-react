@@ -83,8 +83,8 @@ class RecipeViewSet(viewsets.GenericViewSet,
         return super().destroy(request, *args, **kwargs)
 
     def get_serializer_class(self):
-        return (RecipeSerializer if self.request.method == "GET"
-                else AddRecipeSerializer)
+        return RecipeSerializer if self.request.method == "GET" else (
+            AddRecipeSerializer)
 
     @action(methods=['POST', 'DELETE'],
             detail=True,

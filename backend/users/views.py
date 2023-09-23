@@ -13,10 +13,10 @@ class SubscriptionsViewSet(viewsets.GenericViewSet,
     """ViewSet for Subscription model.
     get_queryset() - returns users that request user subscribed on."""
     def get_queryset(self):
-        return (User.objects.filter(
+        return User.objects.filter(
             id__in=Subscription.objects.filter(
                 user=self.request.user).values_list('author__id', flat=True)
-        ).all())
+        ).all()
 
 
 @api_view(['POST', 'DELETE'])
