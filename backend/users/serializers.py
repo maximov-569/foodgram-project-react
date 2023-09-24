@@ -2,7 +2,7 @@ from djoser.serializers import UserSerializer, UserCreateSerializer
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
-from users.models import User, Subscription
+from users.models import Subscription
 from foodgram_backend.settings import FORBIDDEN_USERNAMES
 
 
