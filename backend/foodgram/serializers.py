@@ -231,8 +231,8 @@ class AddRecipeSerializer(serializers.ModelSerializer):
 
         to_save = [
             IngredientToRecipe(ingredient=item['id'],
-                                   amount=item['amount'],
-                                   recipe=instance) for item in ingredients]
+                               amount=item['amount'],
+                               recipe=instance) for item in ingredients]
         IngredientToRecipe.objects.bulk_create(to_save)
 
         instance.save()
