@@ -150,27 +150,46 @@ class AddRecipeSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         ingredients = attrs.get('ingredients')
+        if not ingredients:
+            raise ValidationError(
+                detail={'ingredients': 'field is required.'}
+            )
+        for item in ingredients:
+            if 'id' not in item:
+                raise ValidationError(
+                    detail={'ingredients': {'id': 'field is required.'}}
+                )
+            if 'amount' not in item:
+                raise ValidationError(
+                    detail={'ingredients': {'amount': 'field is required.'}}
+                )
+            if item['amount'] <= 0:
+                raise ValidationError(
+                    detail={
+                        'ingredients': {'amount': 'must be greater than 0.'}
+                    }
+                )
         unique_ingredients = set([item['id'] for item in ingredients])
         if len(ingredients) > len(unique_ingredients):
             raise ValidationError(
-                detail='Ingredients must be unique.'
+                detail={'ingredients': 'only unique values.'}
             )
-        for item in ingredients:
-            if item.get('amount') <= 0:
-                raise ValidationError(
-                    detail='Amount should be greater than 0.')
 
         tags = attrs.get('tags')
+        if not tags:
+            raise ValidationError(
+                detail={'tags': 'field is required.'}
+            )
         unique_tags = set(tags)
         if len(tags) > len(unique_tags):
             raise ValidationError(
-                detail='Tags must be Unique.'
+                detail={'tags': 'only unique values.'}
             )
 
         cooking_time = attrs.get('cooking_time')
-        if cooking_time < 1:
+        if cooking_time is not None and cooking_time < 1:
             raise ValidationError(
-                detail='Cooking time should be greater than 0.')
+                detail={'cooking_time': 'should be greater than 0.'})
 
         return attrs
 
@@ -202,21 +221,19 @@ class AddRecipeSerializer(serializers.ModelSerializer):
             'cooking_time', instance.cooking_time)
         instance.image = validated_data.get('image', instance.image)
 
-        if 'tags' in validated_data:
-            tags = validated_data.pop('tags')
-            instance.tags.set(tags)
+        tags = validated_data.pop('tags')
+        instance.tags.set(tags)
 
-        if 'ingredients' in validated_data:
-            ingredients = validated_data.pop('ingredients')
-            IngredientToRecipe.objects.filter(
-                recipe=instance,
-                ingredient__in=instance.ingredients.all()).delete()
+        ingredients = validated_data.pop('ingredients')
+        IngredientToRecipe.objects.filter(
+            recipe=instance,
+            ingredient__in=instance.ingredients.all()).delete()
 
-            to_save = [
-                IngredientToRecipe(ingredient=item['id'],
+        to_save = [
+            IngredientToRecipe(ingredient=item['id'],
                                    amount=item['amount'],
                                    recipe=instance) for item in ingredients]
-            IngredientToRecipe.objects.bulk_create(to_save)
+        IngredientToRecipe.objects.bulk_create(to_save)
 
         instance.save()
         return instance

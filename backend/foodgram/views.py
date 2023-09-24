@@ -77,16 +77,13 @@ class RecipeViewSet(viewsets.GenericViewSet,
         instance = self.get_object()
 
         if request.user != instance.author:
-            return Response({"detail": "Only author can delete recipe."},
+            return Response({'detail': 'Only author can delete recipe.'},
                             status=status.HTTP_403_FORBIDDEN)
 
         return super().destroy(request, *args, **kwargs)
 
-    def partial_update(self, request, *args, **kwargs):
-        return super().update(request, args, kwargs)
-
     def get_serializer_class(self):
-        return RecipeSerializer if self.request.method == "GET" else (
+        return RecipeSerializer if self.request.method == 'GET' else (
             AddRecipeSerializer)
 
     @action(methods=['POST', 'DELETE'],
@@ -134,7 +131,7 @@ class RecipeViewSet(viewsets.GenericViewSet,
 
             if recipe in shopping_cart.recipes.all():
                 return Response(
-                    {"detail":
+                    {'detail':
                         f'Recipe with id {pk} already in shopping cart.'},
                     status=status.HTTP_400_BAD_REQUEST)
 
@@ -149,8 +146,8 @@ class RecipeViewSet(viewsets.GenericViewSet,
 
             if recipe not in shopping_cart.recipes.all():
                 return Response(
-                    {"detail":
-                        f"Recipe with id {pk} not in shopping cart."},
+                    {'detail':
+                        f'Recipe with id {pk} not in shopping cart.'},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
