@@ -25,7 +25,7 @@ PATH_TO_MEDIA_ROOT = '/media_files/'
 SECRET_KEY = os.getenv('SECRET_KEY', 'test')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost',
                  '127.0.0.1',
@@ -162,8 +162,9 @@ DJOSER = {
     'HIDE_USERS': False,
     'LOGIN_FIELD': 'email',
     'SERIALIZERS': {
-        'user': 'users.serializers.CustomUserSerializer',
-        'current_user': 'users.serializers.CustomUserSerializer',
+        'user': 'users.serializers.CustomReadUserSerializer',
+        'current_user': 'users.serializers.CustomReadUserSerializer',
+        'user_create': 'users.serializers.CustomCreateUserSerializer',
     },
     'PERMISSIONS': {
         'user': ['users.permissions.UserDetailPermission'],
@@ -180,3 +181,5 @@ STATIC_ROOT = BASE_DIR / 'collected_static'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = PATH_TO_MEDIA_ROOT + 'media/'
+
+FORBIDDEN_USERNAMES = ['me']

@@ -1,7 +1,8 @@
+from django.db.transaction import atomic
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from drf_base64.fields import Base64ImageField
-from users.serializers import CustomUserSerializer
+from users.serializers import CustomReadUserSerializer
 from users.models import User, Subscription
 from foodgram.models import (Tag, Ingredient, Recipe, IngredientToRecipe,
                              Favorite, ShoppingCart)
@@ -95,7 +96,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     ingredients = IngredientToRecipeSerializer(
         many=True, read_only=True, source='ingredient')
 
-    author = CustomUserSerializer(many=False, read_only=True)
+    author = CustomReadUserSerializer(many=False, read_only=True)
     is_favorited = serializers.SerializerMethodField(read_only=True)
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
 
@@ -134,33 +135,46 @@ class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
 class AddRecipeSerializer(serializers.ModelSerializer):
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
-        many=True, allow_empty=False, allow_null=False)
+        many=True, allow_empty=False, allow_null=False, required=True)
 
     ingredients = AddIngredientToRecipeSerializer(
-        many=True, allow_null=False, allow_empty=False)
+        many=True, allow_null=False, allow_empty=False, required=True)
 
     image = Base64ImageField(required=True)
 
     class Meta:
         model = Recipe
+        partial_update = False
         fields = ('ingredients', 'tags', 'name', 'text',
                   'cooking_time', 'image',)
 
     def validate(self, attrs):
         ingredients = attrs.get('ingredients')
-        if ingredients:
-            for item in ingredients:
-                if item.get('amount') <= 0:
-                    raise ValidationError(
-                        detail='Amount should be greater than 0.')
+        unique_ingredients = set([item['id'] for item in ingredients])
+        if len(ingredients) > len(unique_ingredients):
+            raise ValidationError(
+                detail='Ingredients must be unique.'
+            )
+        for item in ingredients:
+            if item.get('amount') <= 0:
+                raise ValidationError(
+                    detail='Amount should be greater than 0.')
+
+        tags = attrs.get('tags')
+        unique_tags = set(tags)
+        if len(tags) > len(unique_tags):
+            raise ValidationError(
+                detail='Tags must be Unique.'
+            )
 
         cooking_time = attrs.get('cooking_time')
-        if cooking_time and cooking_time <= 0:
+        if cooking_time < 1:
             raise ValidationError(
                 detail='Cooking time should be greater than 0.')
 
         return attrs
 
+    @atomic
     def create(self, validated_data):
         tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
@@ -172,6 +186,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
             IngredientToRecipe(ingredient=item['id'],
                                amount=item['amount'],
                                recipe=recipe) for item in ingredients]
+
         IngredientToRecipe.objects.bulk_create(to_save)
 
         return recipe
@@ -179,6 +194,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return RecipeSerializer(instance, context=self.context).data
 
+    @atomic
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.text = validated_data.get('text', instance.text)
@@ -201,5 +217,6 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                                    amount=item['amount'],
                                    recipe=instance) for item in ingredients]
             IngredientToRecipe.objects.bulk_create(to_save)
+
         instance.save()
         return instance

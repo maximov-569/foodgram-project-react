@@ -63,7 +63,7 @@ class Recipe(models.Model):
 
     )
     name = models.CharField(
-        max_length=50,
+        max_length=200,
         blank=False,
         null=False,
         unique=True,
@@ -92,9 +92,9 @@ class Recipe(models.Model):
         through='foodgram.IngredientToRecipe',
         through_fields=('recipe', 'ingredient'),
         related_name='recipes',
-        to=Ingredient
+        to=Ingredient,
     )
-    pub_date = models.DateField(auto_now_add=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ('-pub_date',)
@@ -128,7 +128,7 @@ class IngredientToRecipe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],
-                name='Unique recipe/ingredient constraint.'
+                name='Unique recipe/ingredient constraint.',
             )
         ]
 

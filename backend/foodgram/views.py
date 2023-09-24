@@ -82,6 +82,9 @@ class RecipeViewSet(viewsets.GenericViewSet,
 
         return super().destroy(request, *args, **kwargs)
 
+    def partial_update(self, request, *args, **kwargs):
+        return super().update(request, args, kwargs)
+
     def get_serializer_class(self):
         return RecipeSerializer if self.request.method == "GET" else (
             AddRecipeSerializer)
