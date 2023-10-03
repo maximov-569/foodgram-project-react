@@ -1,3 +1,0 @@
-url - https://foodenjoyers.mooo.com/
-SuperUser email - admin@admin.com
-SuperUser password - Admin123!

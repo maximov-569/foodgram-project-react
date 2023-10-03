@@ -3,8 +3,6 @@
 
 Проект реализован с помощью Django, Django Rest Framework, Nginx, Docker и Postgresql.
 
-Рабочий билд, развернутый с помощью Docker контейнеров и Github Actions можно посмотреть по адресу https://foodenjoyers.mooo.com
-
 ## Запуск на локальном сервере
 
 - Скачайте репозиторий проекта
