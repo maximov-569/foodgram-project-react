@@ -34,6 +34,11 @@ class SubscriptionSerializer(serializers.ModelSerializer):
                   )
         model = User
 
+    def _is_valid_query_params(self, query_params):
+        recipes_limit = query_params['recipes_limit']
+
+        return isinstance(recipes_limit, int) and recipes_limit > 0
+
     def get_is_subscribed(self, obj):
         user = self.context['request'].user
         if user.is_anonymous:
@@ -47,13 +52,11 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         """Through this method we can limit recipe count for
         each user in sent data."""
         queryset = Recipe.objects.filter(author=obj)
+        query_params = self.context['request'].query_params
 
-        if self.context['request'].query_params:
-            recipes_limit = self.context['request'].query_params[
-                'recipes_limit'
-            ]
-            if isinstance(recipes_limit, int) and recipes_limit > 0:
-                queryset = queryset[:recipes_limit]
+        if query_params:
+            if self._is_valid_query_params(query_params):
+                queryset = queryset[:query_params['recipes_limit']]
 
         serializer = ShortRecipeSerializer(
             queryset, many=True, context=self.context)
