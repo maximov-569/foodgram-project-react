@@ -49,9 +49,11 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         queryset = Recipe.objects.filter(author=obj)
 
         if self.context['request'].query_params:
-            recipes_limit = int(
-                self.context['request'].query_params['recipes_limit'])
-            queryset = queryset[:recipes_limit]
+            recipes_limit = self.context['request'].query_params[
+                'recipes_limit'
+            ]
+            if isinstance(recipes_limit, int) and recipes_limit > 0:
+                queryset = queryset[:recipes_limit]
 
         serializer = ShortRecipeSerializer(
             queryset, many=True, context=self.context)
